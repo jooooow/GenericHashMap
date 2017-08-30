@@ -1,3 +1,3 @@
-### Generic HashMap
+# Generic HashMap
 
-to be continue
+`this is a generic c++ class of hashmap`
