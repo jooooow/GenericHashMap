@@ -26,7 +26,12 @@ public:
 	bool find(int index, Value value);
 	Value getValue(Key key);
 private:
-	int hash(Key key);
+	//int hash(Key key);
+	int hash(const int& key);
+	int hash(const char& key);
+	int hash(const char* key);
+	int hash(const unsigned int& key);
+	int hash(const std::string& key);
 	void deleteAll();
 };
 
@@ -91,6 +96,8 @@ bool HashMap<Key, Value>::insert(Key key, Value value)
 template<typename Key, typename Value>
 bool HashMap<Key, Value>::remove(Key key)
 {
+	//TODO
+
 	return true;
 }
 
@@ -137,21 +144,50 @@ Value HashMap<Key, Value>::getValue(Key key)
 	}
 }
 
+//template<typename Key, typename Value>
+//int HashMap<Key, Value>::hash(Key key)
+//{
+//	if (typeid(key) == typeid(int))
+//	{
+//		hash(key);
+//	}
+//	else if (typeid(key) == typeid(char))
+//	{
+//		return (int)key % size;
+//	}
+//	else
+//	{
+//		return 0;
+//	}
+//}
 template<typename Key, typename Value>
-int HashMap<Key, Value>::hash(Key key)
+int HashMap<Key, Value>::hash(const int& key)
 {
-	if (typeid(key) == typeid(int))
-	{
-		return abs(key) % size;
-	}
-	else if (typeid(key) == typeid(char))
-	{
-		return (int)key % size;
-	}
-	else
-	{
-		return 0;
-	}
+	return abs(key) % size;
+}
+template<typename Key, typename Value>
+int HashMap<Key, Value>::hash(const char& key)
+{
+	return (int)key % size;
+}
+template<typename Key, typename Value>
+int HashMap<Key, Value>::hash(const char* key)
+{
+	const char* p = key;
+	int sum = 0;
+	while (*p != '\0')
+		sum += (int)*p++;
+	return sum % size;
+}
+template<typename Key, typename Value>
+int HashMap<Key, Value>::hash(const unsigned int& key)
+{
+	return 0;
+}
+template<typename Key, typename Value>
+int HashMap<Key, Value>::hash(const std::string& key)
+{
+	return 0;
 }
 
 template<typename Key, typename Value>
