@@ -3,26 +3,176 @@
 #include <string>
 #include <vector>
 
+template<typename Key, typename Value>
 class HashMap
 {
+public:
 	struct Node
 	{
-		int key = -1;
-		std::string value = "";
+		Key key;
+		Value value;
 		Node* next = nullptr;
 	};
+	typedef std::vector<Node*>	NodeVector;
 private:
 	int size;
-	std::vector<Node*> *vec;
+	NodeVector *vec;
 public:
 	HashMap(int _size = 100);
 	~HashMap();
-	bool insert(int key, std::string value);
-	bool remove(int key);
+	bool insert(Key key, Value value);
+	bool remove(Key key);
 	bool isBucketEmpty(int index);
-	bool find(int index, std::string value);
-	std::string getValue(int key);
-	void deleteAll();
+	bool find(int index, Value value);
+	Value getValue(Key key);
 private:
-	int hash(int key);
+	int hash(Key key);
+	void deleteAll();
 };
+
+template<typename Key, typename Value>
+HashMap<Key, Value>::HashMap(int _size) : size(_size)
+{
+	vec = new std::vector<Node*>();
+	for (int i = 0; i < size; i++)
+	{
+		Node* p = nullptr;
+		vec->push_back(p);
+	}
+}
+
+template<typename Key, typename Value>
+HashMap<Key, Value>::~HashMap()
+{
+	deleteAll();
+	delete vec;
+}
+
+template<typename Key, typename Value>
+bool HashMap<Key, Value>::insert(Key key, Value value)
+{
+	int index = hash(key);
+	if (isBucketEmpty(index))
+	{
+		/****** old function ********
+
+		Node** p = &(vec->at(index));
+		*p = new Node();
+		(*p)->value = value;
+		(*p)->key = key;
+
+		*****************************/
+		vec->at(index) = new Node();
+		auto p = vec->at(index);
+		p->value = value;
+		p->key = key;
+		return true;
+	}
+	else
+	{
+		if (!find(index, value))
+		{
+			auto p = vec->at(index);
+			while (p != nullptr)
+				p = p->next;
+			p = new Node();
+			p->value = value;
+			p->key = key;
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+template<typename Key, typename Value>
+bool HashMap<Key, Value>::remove(Key key)
+{
+	return true;
+}
+
+template<typename Key, typename Value>
+bool HashMap<Key, Value>::isBucketEmpty(int index)
+{
+	auto p = vec->at(index);
+	if (p == nullptr)
+		return true;
+	else
+		return false;
+}
+
+template<typename Key, typename Value>
+bool HashMap<Key, Value>::find(int index, Value value)
+{
+	Node* temp = vec->at(index);
+	while (temp != nullptr)
+	{
+		if (temp->value == value)
+			return true;
+		temp = temp->next;
+	}
+	return false;
+}
+
+template<typename Key, typename Value>
+Value HashMap<Key, Value>::getValue(Key key)
+{
+	int index = hash(key);
+	if (isBucketEmpty(index))
+	{
+		return NULL;
+	}
+	else
+	{
+		auto p = vec->at(index);
+		while (p != nullptr)
+		{
+			if (p->key == key)
+				return p->value;
+			p = p->next;
+		}
+	}
+}
+
+template<typename Key, typename Value>
+int HashMap<Key, Value>::hash(Key key)
+{
+	if (typeid(key) == typeid(int))
+	{
+		return abs(key) % size;
+	}
+	else if (typeid(key) == typeid(char))
+	{
+		return (int)key % size;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+template<typename Key, typename Value>
+void HashMap<Key, Value>::deleteAll()
+{
+	for (int i = 0; i < vec->size(); i++)
+	{
+		if (isBucketEmpty(i))
+		{
+			continue;
+		}
+		else
+		{
+			auto current = vec->at(i);
+			Node* temp;
+			while (current != nullptr)
+			{
+				temp = current->next;
+				delete current;
+				current = temp;
+			}
+		}
+	}
+}
