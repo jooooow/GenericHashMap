@@ -4,7 +4,10 @@ HashMap::HashMap(int _size) : size(_size)
 {
 	vec = new std::vector<Node*>();
 	for (int i = 0; i < size; i++)
-		vec->push_back(new Node());
+	{
+		Node* p = nullptr;
+		vec->push_back(p);
+	}
 }
 HashMap::~HashMap()
 {
@@ -16,6 +19,15 @@ bool HashMap::insert(int key, std::string value)
 	int index = hash(key);
 	if (isBucketEmpty(index))
 	{
+		/****** old function ********
+
+		Node** p = &(vec->at(index));
+		*p = new Node();
+		(*p)->value = value;
+		(*p)->key = key;
+
+		*****************************/
+		vec->at(index) = new Node();
 		auto p = vec->at(index);
 		p->value = value;
 		p->key = key;
@@ -28,6 +40,7 @@ bool HashMap::insert(int key, std::string value)
 			auto p = vec->at(index);
 			while (p != nullptr)
 				p = p->next;
+			p = new Node();
 			p->value = value;
 			p->key = key;
 			return true;
@@ -46,7 +59,7 @@ bool HashMap::remove(int key)
 bool HashMap::isBucketEmpty(int index)
 {
 	auto p = vec->at(index);
-	if (p->value == "")
+	if (p == nullptr)
 		return true;
 	else
 		return false;
@@ -67,6 +80,7 @@ std::string HashMap::getValue(int key)
 	int index = hash(key);
 	if (isBucketEmpty(index))
 	{
+		std::cout << "get empty\n";
 		return "";
 	}
 	else
@@ -90,9 +104,7 @@ void HashMap::deleteAll()
 	{
 		if (isBucketEmpty(i))
 		{
-			auto p = vec->at(i);
-			delete p;
-			p = nullptr;
+			continue;
 		}
 		else
 		{
