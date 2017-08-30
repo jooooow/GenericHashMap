@@ -5,15 +5,17 @@
 
 class HashMap
 {
+public:
 	struct Node
 	{
 		int key = -1;
 		std::string value = "";
 		Node* next = nullptr;
 	};
+	typedef std::vector<Node*>	NodeVector;
 private:
 	int size;
-	std::vector<Node*> *vec;
+	NodeVector *vec;
 public:
 	HashMap(int _size = 100);
 	~HashMap();
@@ -22,7 +24,7 @@ public:
 	bool isBucketEmpty(int index);
 	bool find(int index, std::string value);
 	std::string getValue(int key);
-	void deleteAll();
 private:
 	int hash(int key);
+	void deleteAll();
 };
