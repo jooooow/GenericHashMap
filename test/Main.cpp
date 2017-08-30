@@ -17,13 +17,15 @@ int main()
 #ifdef DEBUG
 	enableMemLeakCheck();
 #endif
-	HashMap map;
-	map.insert(1, "hello");
-	map.insert(2, "fuck");
-	map.insert(17, "you");
-	std::cout << map.getValue(1) << '\n';
-	std::cout << map.getValue(2) << '\n';
-	std::cout << map.getValue(17) << '\n';
+	HashMap *map = new HashMap();
+	map->insert(1, "hello");
+	map->insert(2, "fuck");
+	map->insert(17, "you");
+	std::cout << map->getValue(1) << '\n';
+	std::cout << map->getValue(2) << '\n';
+	std::cout << map->getValue(17) << '\n';
+	delete map;
+	map = nullptr;
 	getchar();
 	return 0;
 }
