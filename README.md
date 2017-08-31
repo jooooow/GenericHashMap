@@ -2,9 +2,12 @@
 
 `this is a generic c++ class of hashmap`
 
-### Feature
+## Feature
 
-	1.`template support`
+1.`template support`
 	
-	
-	
+### Update
+
+1.remove function
+
+2.bug fix
