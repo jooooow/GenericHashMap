@@ -13,14 +13,14 @@ public:
 		Value value;
 		Node* next = nullptr;
 	};
-	typedef std::vector<Node*>	NodeVector;
-	typedef const Key&			constKeyRef;
-	typedef const Value&		constValueRef;
-	typedef HashMap&&			RhashMap;
-	typedef const HashMap&		constMapRef;
+	typedef std::vector<Node*>		NodePointerVector;
+	typedef const Key&				constKeyRef;
+	typedef const Value&			constValueRef;
+	typedef HashMap&&				RhashMap;
+	typedef const HashMap&			constMapRef;
 private:
 	int size;											/*size of the vector*/
-	NodeVector *vec;									/*pointer of vector*/
+	NodePointerVector *vec;								/*pointer of vector*/
 public:
 	HashMap(int _size = 100);							/*default constructor*/
 	HashMap(constMapRef map);							/*copy constructor*/
@@ -35,12 +35,16 @@ private:
 	void deleteAll();									/*delete all the nodes*/
 private:
 	int hash(const int& key);							/*use int to get hash value*/
+	int hash(const double& key);						/*use double to get hash value*/
+	int hash(const unsigned int& key);					/*use unsigned int to get hash value*/
 	int hash(const char& key);							/*use char to get hash value*/
 	int hash(const char* key);							/*use char* to get hash value*/
-	int hash(const unsigned int& key);					/*use unsigned int to get hash value*/
 	int hash(const std::string& key);					/*use std::string to get hash value*/
 };
-
+#pragma region HashMap functions
+/*****************************
+  constructor and destructor
+******************************/
 template<typename Key, typename Value>
 HashMap<Key, Value>::HashMap(int _size) : size(_size)
 {
@@ -71,12 +75,14 @@ HashMap<Key, Value>::~HashMap()
 	deleteAll();
 	delete vec;
 }
-
+/*****************************
+	operation functions
+*****************************/
 template<typename Key, typename Value>
 bool HashMap<Key, Value>::insert(constKeyRef key, constValueRef value)
 {
 	int index = hash(key);
-	if (isBucketEmpty(index))
+	if (isBucketEmpty(index))							/*if the bucket is empty, new a node*/
 	{
 		/****** old function ********
 
@@ -93,9 +99,9 @@ bool HashMap<Key, Value>::insert(constKeyRef key, constValueRef value)
 		p->next = nullptr;
 		return true;
 	}
-	else
+	else                                                /*if the bucket is no empty*/
 	{
-		if (!find(key, value))
+		if (!find(key, value))							/*if the bucket doesnt have the same pair, new a node*/
 		{
 			auto p = vec->at(index);
 			while (p != nullptr)
@@ -180,38 +186,47 @@ Value HashMap<Key, Value>::getValue(constKeyRef key)
 		}
 	}
 }
-
-/********************
-	hash functions
-*********************/
+/*****************************
+		hash functions
+******************************/
 template<typename Key, typename Value>
 int HashMap<Key, Value>::hash(const int& key)
 {
 	return abs(key) % size;
 }
 template<typename Key, typename Value>
+int HashMap<Key, Value>::hash(const unsigned int& key)
+{
+	return key % size;
+}
+template<typename Key, typename Value>
+int HashMap<Key, Value>::hash(const double& key)
+{
+	return abs((int)key) % size;
+}
+template<typename Key, typename Value>
 int HashMap<Key, Value>::hash(const char& key)
 {
-	return (int)key % size;
+	return (unsigned int)key % size;
 }
 template<typename Key, typename Value>
 int HashMap<Key, Value>::hash(const char* key)
 {
 	const char* p = key;
-	int sum = 0;
+	unsigned int sum = 0;
 	while (*p != '\0')
-		sum += (int)*p++;
+		sum += (unsigned int)*p++;
 	return sum % size;
-}
-template<typename Key, typename Value>
-int HashMap<Key, Value>::hash(const unsigned int& key)
-{
-	return 0;
 }
 template<typename Key, typename Value>
 int HashMap<Key, Value>::hash(const std::string& key)
 {
-	return 0;
+	unsigned int sum = 0;
+	for (auto ch : key)
+	{
+		sum += (unsigned int)ch;
+	}
+	return sum % size;
 }
 template<typename Key, typename Value>
 void HashMap<Key, Value>::deleteAll()
@@ -224,8 +239,6 @@ void HashMap<Key, Value>::deleteAll()
 		}
 		else
 		{
-			/***** old function *****
-
 			auto current = vec->at(i);
 			Node* temp;
 			while (current != nullptr)
@@ -234,17 +247,7 @@ void HashMap<Key, Value>::deleteAll()
 				delete current;
 				current = temp;
 			}
-
-			*************************/
-
-			auto current = &vec->at(i);
-			Node* temp;
-			while ((*current) != nullptr)
-			{
-					temp = (*current)->next;
-					delete *current;
-					*current = temp;
-			}
 		}
 	}
 }
+#pragma endregion
