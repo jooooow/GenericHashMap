@@ -22,7 +22,7 @@ private:
 	int size;											/*size of the vector*/
 	NodePointerVector *vec;								/*pointer of vector*/
 public:
-	HashMap(int _size = 100);							/*default constructor*/
+	HashMap(int _size = 100);							/*defauwlt constructor*/
 	HashMap(constMapRef map);							/*copy constructor*/
 	HashMap(RhashMap map);								/*move constructor*/
 	~HashMap();											/*destructor*/
